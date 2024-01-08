@@ -95,10 +95,6 @@ function handleSum(req, res) {
    * sure that all values in the num Array are numbers. This is a pain to do the way
    * we did the others in this file. So let's address it in the next Lecturcize.
    */
-
-  /**
-   * Map and Reduce.
-   */
   const sum = nums.map((value) => { return parseInt(value); })
     .reduce((total, current) => { return total + current; }, 0);
 
@@ -111,6 +107,6 @@ function getQuery(req) {
 }
 
 function writeResponse(res, status, object) {
-  res.writeHead(status, { "Content-Type": "text/html" });
+  res.writeHead(status, { "Content-Type": "application/json" });
   res.end(JSON.stringify(object));
 }
