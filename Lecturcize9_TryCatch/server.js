@@ -93,9 +93,6 @@ function handleSum(req, res) {
 
     const nums = (query.num instanceof Array ? query.num : [query.num]);
 
-    /**
-     * Map and Reduce.
-     */
     const sum = nums.map((value) => {
       const number = parseInt(value);
 
