@@ -23,7 +23,7 @@ const listener = app.listen(process.env.PORT, process.env.HOST, () => {
 });
 
 function getBooks(req, res) {
-  pgClient.query('SELECT name, author FROM books ORDER BY name')
+  pgClient.query("SELECT name, author FROM books ORDER BY name")
     .then((results) => {
       res.status(200).json(results.rows);
     })
