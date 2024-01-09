@@ -6,11 +6,11 @@ const session = require("express-session")
 const app = express();
 
 const sessionOptions = {
-  secret: "Mike is awesome", //
-  resave: false, //
-  saveUninitialized: false, //
-  cookie: { //
-    maxAge: 60_000 //
+  secret: "Mike is awesome",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 60_000
   }
 };
 

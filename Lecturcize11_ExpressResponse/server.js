@@ -26,7 +26,7 @@ function add(req, res) {
     const sum = a + b;
 
     /**
-     * Here we are instroduced to Express' res.json.
+     * Here we are instroduced to the Express res.json method.
      * This is a special utility function of an Express response that allows us to set the content type
      * header, the status, and the body of the request in one easy call.
      */
