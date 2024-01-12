@@ -5,7 +5,7 @@ const pgClient = require("./pgClient");
 
 const app = express();
 
-const bodyParser = require('body-parser');
+const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -32,7 +32,12 @@ function getBooks(req, res) {
 function getBook(req, res) {
   pgClient.query("SELECT name, author FROM books WHERE id = $1", [req.params.id])
     .then((results) => {
-      res.status(200).json(results.rows[0]);
+      if(results.rowCount > 0) {
+        res.status(200).json(results.rows[0]);
+      }
+      else {
+        res.status(404).json({ error: "Book not found." });
+      }
     })
     .catch((error) => {
       res.status(500).json({ error: `We encountered an error with your request: ${error}.` });
@@ -45,7 +50,7 @@ function createBook(req, res) {
   pgClient.query("INSERT INTO books (name, author) VALUES ($1, $2) RETURNING id", [book.name, book.author])
     .then((results) => {
       res.location(`/books/${results.rows[0].id}`);
-      res.status(201).json({ message: 'Book created successfully.' });
+      res.status(201).json({ message: "Book created successfully." });
     })
     .catch((error) => {
       res.status(500).json({ error: `We encountered an error with your request: ${ error }.` });
