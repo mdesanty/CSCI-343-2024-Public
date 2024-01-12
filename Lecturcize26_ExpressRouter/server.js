@@ -9,17 +9,30 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get("/authors", getAuthors);
-app.get("/authors/:id", getAuthor);
-app.post("/authors", createAuthor);
-app.put("/authors/:id", updateAuthor);
-app.delete("/authors/:id", deleteAuthor);
+/**
+ * we can use an Express Router object to define specific sets of routes,
+ * like our author and book routes.
+ *
+ * Once we've defined the routes in our router object, we add the routes
+ * to the app with the .use method.
+ */
+const authorRoutes = express.Router();
+authorRoutes.get("/", getAuthors);
+authorRoutes.get("/:id", getAuthor);
+authorRoutes.post("/", createAuthor);
+authorRoutes.put("/:id", updateAuthor);
+authorRoutes.delete("/:id", deleteAuthor);
 
-app.get("/books", getBooks);
-app.get("/books/:id", getBook);
-app.post("/books", createBook);
-app.put("/books/:id", updateBook);
-app.delete("/books/:id", deleteBook);
+app.use("/authors", authorRoutes);
+
+const bookRoutes = express.Router();
+bookRoutes.get("/", getBooks);
+bookRoutes.get("/:id", getBook);
+bookRoutes.post("/", createBook);
+bookRoutes.put("/:id", updateBook);
+bookRoutes.delete("/:id", deleteBook);
+
+app.use("/books", bookRoutes);
 
 const listener = app.listen(process.env.PORT, process.env.HOST, () => {
   console.log(`Server listening at ${listener.address().address}:${listener.address().port}`);
@@ -93,11 +106,6 @@ function deleteAuthor(req, res) {
 }
 
 function getBooks(req, res) {
-  /**
-   * Here we eliminate the n+1 problem that existed in our original implementation.
-   * We do this by using an INNER JOIN and the json_build_object function returning
-   * all of the data that we need in a single query.
-   */
   const sql = `
     SELECT
       b.id,
