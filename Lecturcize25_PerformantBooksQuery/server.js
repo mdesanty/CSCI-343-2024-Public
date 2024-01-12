@@ -38,7 +38,12 @@ function getAuthors(req, res) {
 function getAuthor(req, res) {
   pgClient.query("SELECT id, title, first_name, middle_name, last_name FROM authors WHERE id = $1", [req.params.id])
     .then((results) => {
-      res.status(200).json(results.rows[0]);
+      if(results.rowCount > 0) {
+        res.status(200).json(results.rows[0]);
+      }
+      else {
+        res.status(404).json({ error: `Author not found for id ${req.params.id}` });
+      }
     })
     .catch((error) => {
       res.status(500).json({ error: `We encountered an error with your request: ${error}.` });
@@ -69,7 +74,7 @@ function updateAuthor(req, res) {
         res.status(200).json({ message: "Author successfully updated." });
       }
       else {
-        res.status(404).json({ error: "Author not found." });
+        res.status(404).json({ error: `Author not found for id ${req.params.id}` });
       }
     })
     .catch((error) => {
@@ -84,7 +89,7 @@ function deleteAuthor(req, res) {
         res.status(200).json({ message: "Author successfully deleted." });
       }
       else {
-        res.status(404).json({ error: "Author not found." });
+        res.status(404).json({ error: `Author not found for id ${req.params.id}` });
       }
     })
     .catch((error) => {
@@ -126,6 +131,9 @@ function getBooks(req, res) {
 }
 
 function getBook(req, res) {
+  /**
+   * Similarly, here we eliminate the extra query to lookup author.
+   */
   const sql = `
     SELECT
       b.id,
@@ -140,7 +148,12 @@ function getBook(req, res) {
 
   pgClient.query(sql, [req.params.id])
     .then((results) => {
-      res.status(200).json(results.rows[0]);
+      if(results.rowCount > 0) {
+        res.status(200).json(results.rows[0]);
+      }
+      else {
+        res.status(404).json({ error: `Book not found for id ${req.params.id}` });
+      }
     })
     .catch((error) => {
       res.status(500).json({ error: `We encountered an error with your request: ${error}.` });
@@ -169,7 +182,7 @@ function updateBook(req, res) {
         res.status(200).json({ message: "Book successfully updated." });
       }
       else {
-        res.status(404).json({ error: "Book not found." });
+        res.status(404).json({ error: `Book not found for id ${req.params.id}` });
       }
     })
     .catch((error) => {
@@ -184,7 +197,7 @@ function deleteBook(req, res) {
         res.status(200).json({ message: "Book successfully deleted." });
       }
       else {
-        res.status(404).json({ error: "Book not found." });
+        res.status(404).json({ error: `Book not found for id ${req.params.id}` });
       }
     })
     .catch((error) => {

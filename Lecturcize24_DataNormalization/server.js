@@ -5,7 +5,7 @@ const pgClient = require("./pgClient");
 
 const app = express();
 
-const bodyParser = require('body-parser');
+const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -41,7 +41,12 @@ function getAuthors(req, res) {
 function getAuthor(req, res) {
   pgClient.query("SELECT id, title, first_name, middle_name, last_name FROM authors WHERE id = $1", [req.params.id])
     .then((results) => {
-      res.status(200).json(results.rows[0]);
+      if(results.rowCount > 0) {
+        res.status(200).json(results.rows[0]);
+      }
+      else {
+        res.status(404).json({ error: "Author not found." });
+      }
     })
     .catch((error) => {
       res.status(500).json({ error: `We encountered an error with your request: ${error}.` });
@@ -55,7 +60,7 @@ function createAuthor(req, res) {
   pgClient.query(sql, [author.title, author.first_name, author.middle_name, author.last_name])
     .then((results) => {
       res.location(`/authors/${results.rows[0].id}`);
-      res.status(201).json({ message: 'Author created successfully.' });
+      res.status(201).json({ message: "Author created successfully." });
     })
     .catch((error) => {
       res.status(500).json({ error: `We encountered an error with your request: ${ error }.` });
@@ -96,6 +101,10 @@ function deleteAuthor(req, res) {
 }
 
 async function getBooks(req, res) {
+  /**
+   * It is convention to return the author as a child object of the book in
+   * our JSON. To do this, we need both our book and author data.
+   */
   try {
     const sql = "SELECT id, title, author_id FROM books ORDER BY id";
 
@@ -116,26 +125,24 @@ async function getBooks(req, res) {
   }
 }
 
-function getBook(req, res) {
-  const sql = `
-    SELECT
-      b.id,
-      b.title,
-      json_build_object('id', a.id, 'title', a.title, 'first_name', a.first_name, 'middle_name', a.middle_name, 'last_name', a.last_name)
-    FROM
-      books b
-      INNER JOIN authors a ON a.id = b.author_id
-    WHERE
-      b.id = $1
-  `;
+async function getBook(req, res) {
+  try {
+    const sql = "SELECT id, title, author_id FROM books ORDER BY id";
+    const results = await pgClient.query(sql);
 
-  pgClient.query(sql, [req.params.id])
-    .then((results) => {
-      res.status(200).json(results.rows[0]);
-    })
-    .catch((error) => {
-      res.status(500).json({ error: `We encountered an error with your request: ${error}.` });
-    });
+    if(results.rowCount > 0) {
+      const author = await pgClient.query("SELECT id, title, first_name, middle_name, last_name FROM authors WHERE id = $1", [result.author_id]);
+      const book = {id: result.id, title: result.title, author: author.rows[0]}
+
+      res.status(200).json(books);
+    }
+    else {
+      res.status(404).json({ error: "Book not found." });
+    }
+  }
+  catch(error) {
+    res.status(500).json({ error: `We encountered an error with your request: ${error}.` });
+  }
 }
 
 function createBook(req, res) {
@@ -144,7 +151,7 @@ function createBook(req, res) {
   pgClient.query("INSERT INTO books (title, author_id) VALUES ($1, $2) RETURNING id", [book.title, book.author_id])
     .then((results) => {
       res.location(`/books/${results.rows[0].id}`);
-      res.status(201).json({ message: 'Book created successfully.' });
+      res.status(201).json({ message: "Book created successfully." });
     })
     .catch((error) => {
       res.status(500).json({ error: `We encountered an error with your request: ${ error }.` });
