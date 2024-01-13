@@ -54,7 +54,7 @@ const Calculator = () => {
           <button type="button" style={{marginRight: "5px"}} onClick={subtract}>Subtract</button>
           <button type="button" onClick={clear}>Clear</button>
         </form>
-        <div class="results-container">
+        <div className="results-container">
           <span>Result: <span>{result}</span></span>
         </div>
       </div>
