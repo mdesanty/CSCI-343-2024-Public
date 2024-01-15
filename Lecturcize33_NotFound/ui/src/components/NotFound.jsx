@@ -3,8 +3,8 @@ import { Container } from "react-bootstrap";
 function NotFound() {
   return (
     <Container className="pt-3">
-      <h1>Oops!</h1>
-      <p>The page you are looking for doesn't seem to exist.</p>
+      <h3>Oops!</h3>
+      <p>It looks like the page you are looking for doesn't exist.</p>
     </Container>
   );
 }
