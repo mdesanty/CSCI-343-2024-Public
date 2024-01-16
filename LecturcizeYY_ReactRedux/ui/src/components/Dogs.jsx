@@ -1,4 +1,14 @@
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { incrementDog } from "../slices/viewCountSlice";
+
 function Dogs() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(incrementDog());
+  }, []);
+
   return (
     <>
       <h5>Dogs are Great</h5>
