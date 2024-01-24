@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 function AuthorForm() {
-  const [alert, setAlert] = useState({ message: "", variant: ""});
+  const [alert, setAlert] = useState({ message: "", variant: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({ title: "", first_name: "", middle_name: "", last_name: "" });
 
@@ -16,7 +16,7 @@ function AuthorForm() {
 
     axios.post("/api/authors", formData)
       .then(response => {
-        setAlert({ message: "Author successfully created.", variant: "success"});
+        setAlert({ message: "Author successfully created.", variant: "success" });
       })
       .catch(error => {
         setAlert({ message: "Failed to create author.", variant: "danger" });
