@@ -4,10 +4,7 @@ const express = require("express");
 const pgClient = require("./pgClient");
 
 const app = express();
-
-const bodyParser = require("body-parser");
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 
 app.get("/books", getBooks);
 app.get("/books/:id", getBook);

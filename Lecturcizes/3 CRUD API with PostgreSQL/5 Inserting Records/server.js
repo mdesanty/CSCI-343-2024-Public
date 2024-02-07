@@ -11,9 +11,7 @@ const app = express();
  * If you recall from Advanced Web Dev, post and put requests use the body for
  * the data instead of the query.
  */
-const bodyParser = require('body-parser');
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 
 app.post("/books", createBook);
 
