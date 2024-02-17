@@ -9,6 +9,7 @@ function Books() {
   const location = useLocation();
   const [books, setBooks] = useState([]);
   const [error, setError] = useState(null);
+  const [alert, setAlert] = useState({ message: "", variant: "" });
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -16,19 +17,39 @@ function Books() {
       .then(response => {
         setBooks(response.data);
         setError(null);
+        setAlert({ message: "", variant: "" });
       })
       .catch(error => {
         setError(error.message);
+        setAlert({ message: "Failed to load books", variant: "danger" });
       })
       .finally(() => {
         setIsLoading(false);
       });
   }, []);
 
+  const onDeleteClick = (e, book) => {
+    e.preventDefault();
+    const bookId = book.id;
+
+    if (window.confirm(`Are you sure you want to delete the book, ${book.name}?`)) {
+      axios.delete(`/api/books/${bookId}`)
+        .then(response => {
+          setBooks(prev => prev.filter(book => book.id !== bookId));
+          setAlert({ message: "Book successfully deleted.", variant: "success" });
+        })
+        .catch(error => {
+          console.log(error);
+          setAlert({ message: "Failed to delete book.", variant: "danger" });
+        });
+    }
+  }
+
   return (
     <Container className="pt-3">
-      {error && <Alert variant="danger" dismissible>Failed to load books.</Alert>}
+      {!!alert.message && <Alert variant={alert.variant} dismissible>{alert.message}</Alert>}
       {location.state?.alert && <Alert variant={location.state.alert.variant} dismissible>{location.state.alert.message}</Alert>}
+
       <h3>Books</h3>
 
       <div>
@@ -46,11 +67,11 @@ function Books() {
               <tr>
                 <th>Title</th>
                 <th>Author</th>
-                <th style={{ width: "50px" }}></th>
+                <th style={{ width: "110px" }}></th>
               </tr>
             </thead>
             <tbody>
-              {books.map(book => <Book key={book.id} book={book} />)}
+              {books.map(book => <Book key={book.id} book={book} onDeleteClick={onDeleteClick} />)}
             </tbody>
           </Table>
           :
