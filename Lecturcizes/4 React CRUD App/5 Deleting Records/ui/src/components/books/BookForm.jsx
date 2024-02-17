@@ -32,7 +32,7 @@ function AuthorForm({ book }) {
         navigate("/books", { state: { alert: { message: `Book successfully ${!!book?.id ? "updated" : "created" }.`, variant: "success" } } });
       })
       .catch(error => {
-        setAlert({ message: "Failed to create author.", variant: "danger" });
+        setAlert({ message: `Failed to ${!!book?.id ? "update" : "create"} book.`, variant: "danger" });
       })
       .finally(() => {
         setIsSubmitting(false);

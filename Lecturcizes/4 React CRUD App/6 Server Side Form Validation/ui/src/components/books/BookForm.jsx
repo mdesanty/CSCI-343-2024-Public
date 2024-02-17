@@ -8,6 +8,7 @@ import { useEffect } from "react";
 function AuthorForm({ book }) {
   const navigate = useNavigate();
   const [alert, setAlert] = useState({ message: "", variant: "" });
+  const [errors, setErrors] = useState({ });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({ name: "", author: "" });
 
@@ -32,7 +33,13 @@ function AuthorForm({ book }) {
         navigate("/books", { state: { alert: { message: `Book successfully ${!!book?.id ? "updated" : "created" }.`, variant: "success" } } });
       })
       .catch(error => {
-        setAlert({ message: `Failed to ${!!book?.id ? "update" : "create"} book.`, variant: "danger" });
+        if (error.response?.status === 400) {
+          console.log(error.response.data.errors);
+          setErrors(error.response.data.errors);
+        }
+        else {
+          setAlert({ message: `Failed to ${!!book?.id ? "update" : "create" } book.`, variant: "danger" });
+        }
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -59,8 +66,10 @@ function AuthorForm({ book }) {
             type="text"
             value={formData.name}
             placeholder="Enter title"
+            isInvalid={!!errors.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           />
+          <Form.Control.Feedback type="invalid">{errors.name}</Form.Control.Feedback>
         </Form.Group>
 
         <Form.Group className="mt-2">
@@ -69,8 +78,10 @@ function AuthorForm({ book }) {
             type="text"
             value={formData.author}
             placeholder="Enter first name"
+            isInvalid={!!errors.author}
             onChange={(e) => setFormData({ ...formData, author: e.target.value })}
           />
+          <Form.Control.Feedback type="invalid">{errors.author}</Form.Control.Feedback>
         </Form.Group>
 
         <Form.Group className="mt-4">
