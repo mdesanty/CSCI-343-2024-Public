@@ -16,6 +16,5 @@ const viewCountSlice = createSlice({
   }
 });
 
-const { actions, reducer } = viewCountSlice;
-export const { incrementCat, incrementDog } = actions;
-export default reducer;
+export const { incrementCat, incrementDog } = viewCountSlice.actions;
+export default viewCountSlice.reducer;
