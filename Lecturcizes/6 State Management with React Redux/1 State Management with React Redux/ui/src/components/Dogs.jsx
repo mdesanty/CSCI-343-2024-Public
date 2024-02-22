@@ -6,7 +6,8 @@ function Dogs() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(incrementDog());
+    // You can pass parameters directly to your actions.
+    dispatch(incrementDog(3));
   }, []);
 
   return (

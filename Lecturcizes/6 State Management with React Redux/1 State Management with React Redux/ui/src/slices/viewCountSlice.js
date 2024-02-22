@@ -10,8 +10,9 @@ const viewCountSlice = createSlice({
     incrementCat: state => {
       state.catViewCount++;
     },
-    incrementDog: state => {
-      state.dogViewCount++;
+    incrementDog: (state, action) => {
+      // action.payload is what you pass when you dispatch the action.
+      state.dogViewCount += action.payload;
     }
   }
 });
