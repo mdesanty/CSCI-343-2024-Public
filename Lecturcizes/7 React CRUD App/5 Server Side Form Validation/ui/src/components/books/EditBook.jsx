@@ -4,10 +4,10 @@ import { useState, useEffect } from "react";
 import { Alert, Spinner } from "react-bootstrap";
 import axios from "axios";
 
-function NewBook() {
+function EditBook() {
   const params = useParams();
   const [alert, setAlert] = useState({ message: "", variant: "" });
-  const [formData, setFormData] = useState({ name: "", author: "" });
+  const [book, setBook] = useState({ name: "", author: "" });
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -17,7 +17,7 @@ function NewBook() {
   const fetchBook = () => {
     axios.get(`/api/books/${params.id}`)
       .then(results => {
-        setFormData({
+        setBook({
           name: results.data.name || "",
           author: results.data.author || "",
         });
@@ -47,10 +47,10 @@ function NewBook() {
 
       {isLoading
         ? <Spinner />
-        : !!!alert.message && <BookForm book={{...formData, id: params.id}} />
+        : !!!alert.message && <BookForm book={{...book, id: params.id}} />
       }
     </>
   );
 }
 
-export default NewBook;
+export default EditBook;

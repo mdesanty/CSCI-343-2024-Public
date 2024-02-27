@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useEffect } from "react";
 
-function AuthorForm({ book }) {
+function BookForm({ book }) {
   const navigate = useNavigate();
   const [alert, setAlert] = useState({ message: "", variant: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -82,4 +82,4 @@ function AuthorForm({ book }) {
   );
 }
 
-export default AuthorForm;
+export default BookForm;

@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import axios from "axios";
 
-function AuthorForm() {
+function BookForm() {
   const navigate = useNavigate();
   const [alert, setAlert] = useState({ message: "", variant: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -20,7 +20,7 @@ function AuthorForm() {
         navigate("/books", { state: { alert: { message: "Book successfully created.", variant: "success" } } });
       })
       .catch(error => {
-        setAlert({ message: "Failed to create author.", variant: "danger" });
+        setAlert({ message: "Failed to create book.", variant: "danger" });
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -70,4 +70,4 @@ function AuthorForm() {
   );
 }
 
-export default AuthorForm;
+export default BookForm;

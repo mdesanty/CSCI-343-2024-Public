@@ -62,7 +62,7 @@ async function createBook(req, res) {
 
 async function updateBook(req, res) {
   const book = req.body;
-  const errors = await validateBook(book);
+  const errors = await validateBook(book, req.params.id);
 
   if (Object.keys(errors).length > 0) {
     res.status(400).json({ errors });
@@ -98,7 +98,7 @@ function deleteBook(req, res) {
     });
 }
 
-async function validateBook(book) {
+async function validateBook(book, bookId = null) {
   const errors = {};
 
   if (!!!book.name) {
@@ -117,9 +117,17 @@ async function validateBook(book) {
     errors.author = "must be less than 50 characters.";
   }
 
-  const bookExists = (await pgClient.query("SELECT id FROM books WHERE name = $1", [book.name])).rowCount > 0;
+  let query;
+  if (!!bookId) {
+    query = pgClient.query("SELECT id FROM books WHERE name = $1 AND id != $2", [book.name, bookId]);
+  }
+  else {
+    query = pgClient.query("SELECT id FROM books WHERE name = $1", [book.name]);
+  }
+
+  const bookExists = (await query).rowCount > 0;
   if (bookExists) {
-    errors.name = "already exists.";
+    errors.name = "already taken.";
   }
 
   return errors;
