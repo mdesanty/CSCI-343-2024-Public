@@ -39,7 +39,6 @@ function Books() {
           setAlert({ message: "Book successfully deleted.", variant: "success" });
         })
         .catch(error => {
-          console.log(error);
           setAlert({ message: "Failed to delete book.", variant: "danger" });
         });
     }
