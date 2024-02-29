@@ -16,6 +16,11 @@ function Books() {
       .then(response => {
         setBooks(response.data);
         setAlert({ message: "", variant: "" });
+
+        if (location.state?.alert) {
+          setAlert(location.state.alert);
+          window.history.replaceState({}, '');
+        }
       })
       .catch(error => {
         setAlert({ message: "Failed to load books", variant: "danger" });
