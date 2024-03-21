@@ -127,14 +127,14 @@ async function getBooks(req, res) {
 
 async function getBook(req, res) {
   try {
-    const sql = "SELECT id, title, author_id FROM books ORDER BY id";
-    const results = await pgClient.query(sql);
+    const sql = "SELECT id, title, author_id FROM books WHERE id = $1";
+    const results = await pgClient.query(sql, [req.params.id]);
 
     if(results.rowCount > 0) {
-      const author = await pgClient.query("SELECT id, title, first_name, middle_name, last_name FROM authors WHERE id = $1", [result.author_id]);
-      const book = {id: result.id, title: result.title, author: author.rows[0]}
+      const author = await pgClient.query("SELECT id, title, first_name, middle_name, last_name FROM authors WHERE id = $1", [results.rows[0].author_id]);
+      const book = { id: results.rows[0].id, title: results.rows[0].title, author: author.rows[0]};
 
-      res.status(200).json(books);
+      res.status(200).json(book);
     }
     else {
       res.status(404).json({ error: "Book not found." });

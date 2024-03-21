@@ -2,6 +2,7 @@ const pgClient = require("../config/pgClient");
 
 const validateBook = async (req, res, next) => {
   const book = req.body;
+  book.id = req.params.id;
   const errors = {};
 
   if (!book.title || book.title.length === 0) {
@@ -13,7 +14,7 @@ const validateBook = async (req, res, next) => {
   }
 
   let query;
-  if (!!book.id) {
+  if (book.id) {
     query = pgClient.query("SELECT id FROM books WHERE title = $1 AND id != $2", [book.title, bookId]);
   }
   else {

@@ -121,7 +121,7 @@ function getBooks(req, res) {
         'first_name', a.first_name,
         'middle_name', a.middle_name,
         'last_name', a.last_name
-      )
+      ) AS author
     FROM
       books b
       INNER JOIN authors a ON a.id = b.author_id
@@ -143,7 +143,13 @@ function getBook(req, res) {
     SELECT
       b.id,
       b.title,
-      json_build_object('id', a.id, 'title', a.title, 'first_name', a.first_name, 'middle_name', a.middle_name, 'last_name', a.last_name)
+      json_build_object(
+        'id', a.id,
+        'title', a.title,
+        'first_name', a.first_name,
+        'middle_name', a.middle_name,
+        'last_name', a.last_name
+      ) AS author
     FROM
       books b
       INNER JOIN authors a ON a.id = b.author_id
