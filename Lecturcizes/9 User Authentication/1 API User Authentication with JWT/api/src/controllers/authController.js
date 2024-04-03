@@ -68,8 +68,7 @@ function login(req, res) {
 }
 
 function logout(req, res) {
-  // Try swapping this with res.clearCookie('jwt');
-  res.cookie('jwt', undefined);
+  res.clearCookie('jwt');
   res.json({ message: 'Successfully logged out.' });
 }
 

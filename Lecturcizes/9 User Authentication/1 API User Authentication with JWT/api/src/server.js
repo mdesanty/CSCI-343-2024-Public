@@ -1,15 +1,12 @@
 require("dotenv").config();
 
 const express = require("express");
+
 const app = express();
-
-const cookieParser = require('cookie-parser');
-app.use(cookieParser(process.env.JWT_SECRET));
-
 app.use(express.json());
 
-const userRoutes = require('./routes/authRoutes');
-app.use('/auth', userRoutes);
+const authRoutes = require('./routes/authRoutes');
+app.use('/auth', authRoutes);
 
 const authorRoutes = require("./routes/authorRoutes");
 app.use("/authors", authorRoutes);

@@ -11,10 +11,15 @@ const index = (req, res) => {
         'first_name', a.first_name,
         'middle_name', a.middle_name,
         'last_name', a.last_name
-      )
+      ) AS author,
+      json_build_object(
+        'id', u.id,
+        'email', u.email
+      ) AS user
     FROM
       books b
       INNER JOIN authors a ON a.id = b.author_id
+      INNER JOIN users u ON u.id = b.user_id
     ORDER BY
       b.id
   `;
@@ -33,10 +38,21 @@ const show = (req, res) => {
     SELECT
       b.id,
       b.title,
-      json_build_object('id', a.id, 'title', a.title, 'first_name', a.first_name, 'middle_name', a.middle_name, 'last_name', a.last_name)
+      json_build_object(
+        'id', a.id,
+        'title', a.title,
+        'first_name', a.first_name,
+        'middle_name', a.middle_name,
+        'last_name', a.last_name
+      ) AS author,
+      json_build_object(
+        'id', u.id,
+        'email', u.email
+      ) AS user
     FROM
       books b
       INNER JOIN authors a ON a.id = b.author_id
+      INNER JOIN users u ON u.id = b.user_id
     WHERE
       b.id = $1
   `;
@@ -58,7 +74,7 @@ const show = (req, res) => {
 const create = (req, res) => {
   const book = req.body;
 
-  pgClient.query("INSERT INTO books (title, author_id) VALUES ($1, $2) RETURNING id", [book.title, book.author_id])
+  pgClient.query("INSERT INTO books (title, author_id, user_id) VALUES ($1, $2, $3) RETURNING id", [book.title, book.author_id, res.locals.user.id])
     .then(results => {
       res.location(`/books/${results.rows[0].id}`);
       res.status(201).json({ message: 'Book created successfully.' });
@@ -71,7 +87,7 @@ const create = (req, res) => {
 const update = (req, res) => {
   const book = req.body;
 
-  pgClient.query("UPDATE books SET title = $1, author_id = $2 WHERE id = $3", [book.title, book.author_id, req.params.id])
+  pgClient.query("UPDATE books SET title = $1, author_id = $2 WHERE id = $3 AND user_id = $4", [book.title, book.author_id, req.params.id, res.locals.user.id])
     .then(results => {
       if (results.rowCount > 0) {
         res.status(200).json({ message: "Book successfully updated." });
@@ -86,7 +102,7 @@ const update = (req, res) => {
 }
 
 const destroy = (req, res) => {
-  pgClient.query("DELETE FROM books WHERE id = $1", [req.params.id])
+  pgClient.query("DELETE FROM books WHERE id = $1 AND user_id = $2", [req.params.id, res.locals.user.id])
     .then(results => {
       if (results.rowCount > 0) {
         res.status(200).json({ message: "Book successfully deleted." });

@@ -5,7 +5,7 @@ import axios from "axios";
 import Author from "./Author";
 
 const Authors = () => {
-  const [alerts, setAlerts] = useState([alert]);
+  const [alerts, setAlerts] = useState([]);
   const [authors, setAuthors] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
