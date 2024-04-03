@@ -4,6 +4,10 @@ const jwt = require('jsonwebtoken');
 
 function register(req, res) {
   const { email, password } = req.body;
+  /*
+  * bcrypt.hashSync() will hash the password sycnhronously.
+  * The second argument to bcrypt.hashSync() is the number of rounds to use (cost factor).
+  */
   const hash = bcrypt.hashSync(password, 12);
 
   pgClient.query('INSERT INTO users (email, password) VALUES($1, $2)', [email, hash])
@@ -82,6 +86,12 @@ function verifyToken(req, res) {
 }
 
 function generateToken(attributes) {
+  /*
+  * With jwt.sign we can create a JWT token.
+  * The first argument is the payload. This is the data we want to store in the token.
+  * The second argument is the secret key. This is used to sign the token.
+  * The third argument is an options object. We can set the expiration time for the token.
+  */
   return jwt.sign(attributes, process.env.JWT_SECRET, { expiresIn: '2 days' });
 }
 
