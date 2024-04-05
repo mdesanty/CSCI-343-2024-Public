@@ -1,21 +1,31 @@
 import { useEffect, useState } from "react";
 import { Container, Navbar, Nav } from "react-bootstrap";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { unauthenticated } from "../slices/authSlice";
+import { verifyToken } from "../actions/authActions";
 import axios from "axios";
 
 import LogInModal from "../components/modals/LogInModal";
 
 function ApplicationLayout() {
+  const location = useLocation();
   const dispatch = useDispatch();
 
   const auth = useSelector(state => state.auth);
   const [showLogInModal, setShowLogInModal] = useState(false);
 
+  /*
+  * We want to verify the token on every page load in case the jwt expires or otherwise becomes invalid.
+  * We also want to verify the token when the user navigates to a new page.
+  *
+  * We use the location.pathname to trigger the useEffect hook when the user navigates to a new page.
+  * We need this because the useEffect hook only triggers when the component mounts or when the dependencies change.
+  * And when the user navigates to a new page, the ApplicationLayout component doesn't unmount and remount.
+  */
   useEffect(() => {
-    console.log(auth);
-  }, [auth]);
+    verifyToken();
+  }, [location.pathname, auth]);
 
   function handleRegisterClick() {
     console.log("Registering...");
