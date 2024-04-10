@@ -22,7 +22,7 @@ function register(req, res) {
           };
 
           res.cookie('jwt', token, {
-            maxAge: '1000',
+            maxAge: '1000000',
             httpOnly: true
           });
 
@@ -39,6 +39,20 @@ function register(req, res) {
 
 function login(req, res) {
   const { email, password } = req.body;
+  const errors = {};
+
+  if (!email || email.length === 0) {
+    errors.email = 'is required.';
+  }
+
+  if (!password || password.length === 0) {
+    errors.password = 'is required.';
+  }
+
+  if (Object.keys(errors).length > 0) {
+    res.status(422).json({ errors });
+    return;
+  }
 
   pgClient.query('SELECT id, email, is_admin, password FROM users WHERE email = $1', [email])
     .then(results => {

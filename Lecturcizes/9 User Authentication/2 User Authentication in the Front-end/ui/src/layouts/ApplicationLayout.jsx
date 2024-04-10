@@ -6,14 +6,15 @@ import { unauthenticated } from "../slices/authSlice";
 import { verifyToken } from "../actions/authActions";
 import axios from "axios";
 
-import LogInModal from "../components/modals/LogInModal";
+import AuthModal from "../components/modals/AuthModal";
 
 function ApplicationLayout() {
   const location = useLocation();
   const dispatch = useDispatch();
 
   const auth = useSelector(state => state.auth);
-  const [showLogInModal, setShowLogInModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authAction, setAuthAction] = useState("");
 
   /*
   * We want to verify the token on every page load in case the jwt expires or otherwise becomes invalid.
@@ -25,14 +26,17 @@ function ApplicationLayout() {
   */
   useEffect(() => {
     verifyToken();
-  }, [location.pathname, auth]);
+  }, [location.pathname]);
 
   function handleRegisterClick() {
+    setAuthAction("register");
+    setShowAuthModal(true);
     console.log("Registering...");
   }
 
   function handleLoginClick() {
-    setShowLogInModal(true);
+    setAuthAction("login");
+    setShowAuthModal(true);
     console.log("Logging in...");
   }
 
@@ -45,6 +49,7 @@ function ApplicationLayout() {
       .catch(error => {
         console.error(error);
       });
+
     console.log("Logging out...");
   }
 
@@ -79,7 +84,7 @@ function ApplicationLayout() {
           <Outlet />
         </div>
 
-        <LogInModal show={showLogInModal} setShow={setShowLogInModal} />
+        <AuthModal show={showAuthModal} action={authAction} setShow={setShowAuthModal} />
       </Container>
     </div>
   );
